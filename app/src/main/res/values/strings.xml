@@ -35,6 +35,7 @@
         <item>Chocolate Brownie</item>
         <item>Strawberry Cheesecake</item>
     </string-array>
+    <string name="title_activity_basket">BasketActivity</string>
 
 
 </resources>

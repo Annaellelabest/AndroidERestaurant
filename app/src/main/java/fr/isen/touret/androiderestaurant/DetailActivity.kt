@@ -1,5 +1,6 @@
 package fr.isen.touret.androiderestaurant
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -8,9 +9,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +49,9 @@ import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import fr.isen.touret.androiderestaurant.basket.Basket
+import fr.isen.touret.androiderestaurant.basket.BasketActivity
+
 
 
 var price = 0.0
@@ -85,6 +92,21 @@ fun DetailView(plat: Plat) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 16.dp, top = 16.dp)
+
+        ) {
+            Button(
+                onClick = {
+                    val intent = Intent(context, BasketActivity::class.java)
+                    context.startActivity(intent)
+                },
+            ) {
+                Text("Voir mon panier")
+            }
+        }
         Column(
             modifier = Modifier.padding(1.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -191,6 +213,7 @@ fun DetailView(plat: Plat) {
                 onClick = {
                     val toastText = "Vous avez ajouté  $quantity x ${plat.name} au panier pour  $newPrice €"
                     Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
+                    Basket.current(context).add(plat, quantity, context)
                 },
                 modifier = Modifier
                     .padding(top = 30.dp)

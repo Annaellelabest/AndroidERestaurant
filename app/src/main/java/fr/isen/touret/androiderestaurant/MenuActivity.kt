@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,7 @@ import org.json.JSONObject
 import com.android.volley.Request
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import fr.isen.touret.androiderestaurant.basket.BasketActivity
 import fr.isen.touret.androiderestaurant.network.Category
 import fr.isen.touret.androiderestaurant.network.MenuResults
 import fr.isen.touret.androiderestaurant.network.Plat
@@ -110,8 +112,6 @@ fun GreetingPreview2() {
     }
 }
 
-
-
 @Composable
 fun MenuView(type: DishType, title: String) {
     val category = remember {
@@ -121,13 +121,33 @@ fun MenuView(type: DishType, title: String) {
 
     val selectedDish = remember { mutableStateOf<Plat?>(null) }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(title
-            , fontSize = 40.sp
-            , color = colorResource(id = R.color.colorAba)
-            , fontWeight = FontWeight.Bold
-            , textAlign = TextAlign.Center
-            , modifier = Modifier.padding(16.dp))
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            title,
+            fontSize = 40.sp,
+            color = colorResource(id = R.color.colorAba),
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 16.dp, top = 16.dp)
+
+        ) {
+            Button(
+                onClick = {
+                    val intent = Intent(context, BasketActivity::class.java)
+                    context.startActivity(intent)
+                },
+            ) {
+                Text("Voir mon panier")
+            }
+        }
         LazyColumn {
             category.value?.items?.forEach { plat ->
                 item {
@@ -143,47 +163,51 @@ fun MenuView(type: DishType, title: String) {
                             .fillMaxWidth(0.9f),
                         shape = RoundedCornerShape(10.dp),
                         color = colorResource(id = R.color.button)
-                    ) {Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(
-                                    text = plat.name,
-                                    fontSize = 20.sp,
-                                    color = colorResource(id = R.color.colorAba),
-                                    modifier = Modifier
-                                        .padding(4.dp)
-                                        .offset(x = 8.dp),
-                                )
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
+                                Column(
+                                    modifier = Modifier.weight(1f)
                                 ) {
                                     Text(
-                                        text = plat.prices.firstOrNull()?.price ?: "",
-                                        color = colorResource(id = R.color.colorAba),
+                                        text = plat.name,
                                         fontSize = 20.sp,
-                                        modifier = Modifier.offset(x = 12.dp),
-                                    )
-                                    Text(
-                                        text = "€",
                                         color = colorResource(id = R.color.colorAba),
-                                        fontSize = 20.sp,
-                                        modifier = Modifier.offset(x = 12.dp),
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .offset(x = 8.dp),
                                     )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = plat.prices.firstOrNull()?.price ?: "",
+                                            color = colorResource(id = R.color.colorAba),
+                                            fontSize = 20.sp,
+                                            modifier = Modifier.offset(x = 12.dp),
+                                        )
+                                        Text(
+                                            text = "€",
+                                            color = colorResource(id = R.color.colorAba),
+                                            fontSize = 20.sp,
+                                            modifier = Modifier.offset(x = 12.dp),
+                                        )
+                                    }
                                 }
-                            }
+                                val imageUrl = plat.images.firstOrNull()
+                                val imageUrl2 = plat.images.getOrNull(1)
+
+
                             AsyncImage(
-                                model = plat.images.firstOrNull() ?: "",
+                                model = imageUrl ?: plat.images.getOrNull(1) ?: "",
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(150.dp)
@@ -192,17 +216,18 @@ fun MenuView(type: DishType, title: String) {
                                 placeholder = painterResource(id = R.drawable.aba),
                                 error = painterResource(id = R.drawable.aba),
                             )
-                        }
-                    }
 
-                    }
+
+                        }
+                        }
                     }
                 }
             }
         }
-    postData(type, type.title(), category)
+        postData(type, type.title(), category)
     }
 }
+
 
 @Composable
 fun postData( type: DishType, title: String, category: MutableState<Category?>) {

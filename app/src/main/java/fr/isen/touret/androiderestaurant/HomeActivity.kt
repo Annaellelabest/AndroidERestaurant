@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.isen.touret.androiderestaurant.basket.BasketActivity
 import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import kotlin.math.log
 
@@ -110,6 +113,22 @@ class MainActivity : ComponentActivity(), MenuInteface{
 @Composable
 fun Greeting(menu : MenuInteface) {
 val context= LocalContext.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 16.dp, top = 16.dp)
+
+    ) {
+        Button(
+            onClick = {
+                val intent = Intent(context, BasketActivity::class.java)
+                context.startActivity(intent)
+            },
+        ) {
+            Text("Voir mon panier")
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
