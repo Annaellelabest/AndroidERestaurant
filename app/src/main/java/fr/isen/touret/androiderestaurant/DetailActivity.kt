@@ -1,15 +1,21 @@
 package fr.isen.touret.androiderestaurant
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,6 +42,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import fr.isen.touret.androiderestaurant.network.Plat
 import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 
 
 var price = 0.0
@@ -60,8 +69,7 @@ class DetailActivity : ComponentActivity() {
         val CATEGORY_EXTRA_PLAT = "CATEGORY_EXTRA_PLAT"
     }
 }
-
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailView(plat: Plat) {
     var quantity by remember { mutableStateOf(1) }
@@ -69,33 +77,43 @@ fun DetailView(plat: Plat) {
     val priceFloat = text.toFloatOrNull() ?: 0f
 
     val newPrice = priceFloat * quantity
+    val pagerState = rememberPagerState(pageCount = { plat.images.size })
 
-
+    val context = LocalContext.current // Obtenir le contexte
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(1.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
-            AsyncImage(
-                model = plat.images.firstOrNull() ?: "",
-                contentDescription = null,
-                modifier = Modifier
-                    .size(150.dp)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(10.dp)),
-                placeholder = painterResource(id = R.drawable.aba),
-                error = painterResource(id = R.drawable.aba),
-            )
+            HorizontalPager(state = pagerState) { page ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    AsyncImage(
+                        model = plat.images.getOrNull(page)
+                            ?: "", // Utilisation de page comme index
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(16.dp)),
+                        placeholder = painterResource(id = R.drawable.aba),
+                        error = painterResource(id = R.drawable.aba),
+                    )
+                }
+            }
 
             Text(
                 text = plat.name,
-                fontSize = 24.sp,
+                fontSize = 30.sp,
+                fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -162,17 +180,29 @@ fun DetailView(plat: Plat) {
                 )
                 Text(
                     text = "€",
-                    fontSize = 20.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
             }
 
+            Button(
+                onClick = {
+                    val toastText = "Vous avez ajouté  $quantity x ${plat.name} au panier pour  $newPrice €"
+                    Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier
+                    .padding(top = 30.dp)
+                    .height(60.dp)
+            ) {
+                Text(text = "Submit",
+                    fontSize = 20.sp,)
+            }
         }
     }
-
 }
+
 @Composable
 fun Greeting3(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -180,6 +210,9 @@ fun Greeting3(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
+
+
 
 @Preview(showBackground = true)
 @Composable
