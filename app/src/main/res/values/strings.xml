@@ -1,3 +1,40 @@
 <resources>
     <string name="app_name">AndroidERestaurant</string>
+    <string name="starter">Starter</string>
+    <string name="dish">Dish</string>
+    <string name="dessert">Dessert</string>
+    <string name="ClickOnStarter">You click on starter</string>
+    <string name="ClickOnDish">You click on dish</string>
+    <string name="ClickOnDessert">You click on dessert</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_dish">DishActivity</string>
+    <string name="title_activity_dessert">DessertActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="dessert_activity_title">Dessert</string>
+    ss
+
+    <string-array name="listStarter" category="STARTER">
+        <item>Salad</item>
+        <item>Spring Roll</item>
+        <item>Chicken Wings</item>
+        <item>Garlic Bread</item>
+        <item>Onion Rings</item>
+    </string-array>
+    <string-array name="listDish" category="DISH">
+        <item>Spaghetti Bolognese</item>
+        <item>Chicken Curry</item>
+        <item>Beef Burger</item>
+        <item>Chicken Burger</item>
+        <item>Beef Steak</item>
+    </string-array>
+    <string-array name="listDessert" category="DESSERT">
+        <item>Chocolate Cake</item>
+        <item>Ice Cream</item>
+        <item>Apple Pie</item>
+        <item>Chocolate Brownie</item>
+        <item>Strawberry Cheesecake</item>
+    </string-array>
+
+
 </resources>
