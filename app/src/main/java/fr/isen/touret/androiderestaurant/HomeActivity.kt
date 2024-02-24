@@ -8,19 +8,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,7 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -39,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.touret.androiderestaurant.basket.BasketActivity
 import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
-import kotlin.math.log
 
 enum class DishType {
     STARTER,
@@ -63,7 +59,6 @@ class MainActivity : ComponentActivity(), MenuInteface{
         super.onCreate(savedInstanceState)
         setContent {
             AndroidERestaurantTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -117,7 +112,8 @@ val context= LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 16.dp, top = 16.dp)
+            .padding(end = 10.dp, top = 10.dp),
+        contentAlignment = Alignment.TopEnd
 
     ) {
         Button(
@@ -125,8 +121,17 @@ val context= LocalContext.current
                 val intent = Intent(context, BasketActivity::class.java)
                 context.startActivity(intent)
             },
+
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.white))
         ) {
-            Text("Voir mon panier")
+            Image(
+
+                painter = painterResource(id = R.drawable.iconba),
+                contentDescription = "picture basket",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(40.dp),
+            )
         }
     }
     Column(
@@ -226,7 +231,7 @@ fun GreetingPreview() {
     AndroidERestaurantTheme {
         Greeting(object : MenuInteface {
             override fun dishPressed(dish: DishType) {
-                // Nothing to do
+
             }
         })
     }

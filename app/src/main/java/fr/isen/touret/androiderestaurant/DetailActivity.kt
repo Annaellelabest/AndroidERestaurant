@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.Column
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +22,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -47,11 +48,13 @@ import coil.compose.AsyncImage
 import fr.isen.touret.androiderestaurant.network.Plat
 import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import fr.isen.touret.androiderestaurant.basket.Basket
 import fr.isen.touret.androiderestaurant.basket.BasketActivity
-
 
 
 var price = 0.0
@@ -76,6 +79,7 @@ class DetailActivity : ComponentActivity() {
         val CATEGORY_EXTRA_PLAT = "CATEGORY_EXTRA_PLAT"
     }
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailView(plat: Plat) {
@@ -86,7 +90,7 @@ fun DetailView(plat: Plat) {
     val newPrice = priceFloat * quantity
     val pagerState = rememberPagerState(pageCount = { plat.images.size })
 
-    val context = LocalContext.current // Obtenir le contexte
+    val context = LocalContext.current
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -95,7 +99,8 @@ fun DetailView(plat: Plat) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 16.dp, top = 16.dp)
+                .padding(end = 10.dp, top = 10.dp),
+            contentAlignment = Alignment.TopEnd
 
         ) {
             Button(
@@ -103,8 +108,17 @@ fun DetailView(plat: Plat) {
                     val intent = Intent(context, BasketActivity::class.java)
                     context.startActivity(intent)
                 },
+
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.white))
             ) {
-                Text("Voir mon panier")
+                Image(
+
+                    painter = painterResource(id = R.drawable.iconba),
+                    contentDescription = "picture basket",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(40.dp),
+                )
             }
         }
         Column(
@@ -120,7 +134,7 @@ fun DetailView(plat: Plat) {
                 ) {
                     AsyncImage(
                         model = plat.images.getOrNull(page)
-                            ?: "", // Utilisation de page comme index
+                            ?: "",
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -139,23 +153,23 @@ fun DetailView(plat: Plat) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
+
             Row {
                 plat.ingredients.forEach { ingredient ->
                     Text(
                         text = ingredient.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
+
+                        )
                     Text(
                         text = ", ",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
+
+                        )
                 }
             }
-
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -244,4 +258,3 @@ fun GreetingPreview3() {
         Greeting3("Android")
     }
 }
-

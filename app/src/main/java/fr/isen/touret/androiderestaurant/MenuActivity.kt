@@ -1,11 +1,9 @@
 package fr.isen.touret.androiderestaurant
 
 
-import android.app.VoiceInteractor
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -19,7 +17,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,17 +25,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,15 +47,16 @@ import fr.isen.amiot.androiderestaurant.network.NetworkConstants
 import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import org.json.JSONObject
 import com.android.volley.Request
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import fr.isen.touret.androiderestaurant.basket.BasketActivity
 import fr.isen.touret.androiderestaurant.network.Category
 import fr.isen.touret.androiderestaurant.network.MenuResults
 import fr.isen.touret.androiderestaurant.network.Plat
 
+private val selectedItems = mutableListOf<Plat>()
 
 class MenuActivity : ComponentActivity() {
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,6 +116,7 @@ fun MenuView(type: DishType, title: String) {
     }
     val context = LocalContext.current
 
+
     val selectedDish = remember { mutableStateOf<Plat?>(null) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -136,7 +134,8 @@ fun MenuView(type: DishType, title: String) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = 16.dp, top = 16.dp)
+                .padding(end = 10.dp, top = 10.dp),
+            contentAlignment = Alignment.TopEnd
 
         ) {
             Button(
@@ -144,8 +143,17 @@ fun MenuView(type: DishType, title: String) {
                     val intent = Intent(context, BasketActivity::class.java)
                     context.startActivity(intent)
                 },
+
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.white))
             ) {
-                Text("Voir mon panier")
+                Image(
+
+                    painter = painterResource(id = R.drawable.iconba),
+                    contentDescription = "picture basket",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(40.dp),
+                )
             }
         }
         LazyColumn {
@@ -164,12 +172,10 @@ fun MenuView(type: DishType, title: String) {
                         shape = RoundedCornerShape(10.dp),
                         color = colorResource(id = R.color.button)
                     ) {
-
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()
@@ -202,30 +208,34 @@ fun MenuView(type: DishType, title: String) {
                                         )
                                     }
                                 }
-                                val imageUrl = plat.images.firstOrNull()
-                                val imageUrl2 = plat.images.getOrNull(1)
-
-
-                            AsyncImage(
-                                model = imageUrl ?: plat.images.getOrNull(1) ?: "",
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(150.dp)
-                                    .padding(8.dp)
-                                    .clip(RoundedCornerShape(10.dp)),
-                                placeholder = painterResource(id = R.drawable.aba),
-                                error = painterResource(id = R.drawable.aba),
-                            )
-
-
-                        }
+                                val imageUrl = remember {
+                                    if (plat.images.isNotEmpty()) {
+                                        plat.images[0]
+                                    } else {
+                                        null
+                                    }
+                                }
+                                AsyncImage(
+                                    model = imageUrl ?: plat.images.getOrNull(1) ?: "",
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(150.dp)
+                                        .padding(8.dp)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    placeholder = painterResource(id = R.drawable.aba),
+                                    error = painterResource(id = R.drawable.aba),
+                                )
+                            }
                         }
                     }
+
                 }
             }
         }
         postData(type, type.title(), category)
     }
+
+
 }
 
 

@@ -12,7 +12,7 @@
     <string name="title_activity_dessert">DessertActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="dessert_activity_title">Dessert</string>
-    ss
+    <string name="title_activity_basket">BasketActivity</string>
 
     <string-array name="listStarter" category="STARTER">
         <item>Salad</item>
@@ -35,7 +35,6 @@
         <item>Chocolate Brownie</item>
         <item>Strawberry Cheesecake</item>
     </string-array>
-    <string name="title_activity_basket">BasketActivity</string>
 
 
 </resources>
