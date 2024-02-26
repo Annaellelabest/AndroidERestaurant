@@ -7,8 +7,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +19,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +39,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -120,6 +126,7 @@ fun MenuView(type: DishType, title: String) {
     val selectedDish = remember { mutableStateOf<Plat?>(null) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
 
         Text(
@@ -133,8 +140,7 @@ fun MenuView(type: DishType, title: String) {
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 10.dp, top = 10.dp),
+                .fillMaxWidth(),
             contentAlignment = Alignment.TopEnd
 
         ) {
@@ -156,79 +162,85 @@ fun MenuView(type: DishType, title: String) {
                 )
             }
         }
-        LazyColumn {
-            category.value?.items?.forEach { plat ->
-                item {
-                    Surface(
-                        onClick = {
-                            val intent = Intent(context, DetailActivity::class.java)
-                            intent.putExtra(DetailActivity.CATEGORY_EXTRA_PLAT, plat)
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier
-                            .padding(top = 15.dp)
-                            .height(150.dp)
-                            .fillMaxWidth(0.9f),
-                        shape = RoundedCornerShape(10.dp),
-                        color = colorResource(id = R.color.button)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+        Box(modifier = Modifier.padding(bottom = 15.dp)) {
+            LazyColumn {
+                category.value?.items?.forEach { plat ->
+                    item {
+                        Surface(
+                            onClick = {
+                                val intent = Intent(context, DetailActivity::class.java)
+                                intent.putExtra(DetailActivity.CATEGORY_EXTRA_PLAT, plat)
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier
+                                .padding(top = 15.dp)
+                                .height(150.dp)
+                                .fillMaxWidth(0.9f),
+                            shape = RoundedCornerShape(10.dp),
+                            color = colorResource(id = R.color.button)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Column(
-                                    modifier = Modifier.weight(1f)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(
-                                        text = plat.name,
-                                        fontSize = 20.sp,
-                                        color = colorResource(id = R.color.colorAba),
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .offset(x = 8.dp),
-                                    )
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
+                                    Column(
+                                        modifier = Modifier.weight(1f)
                                     ) {
                                         Text(
-                                            text = plat.prices.firstOrNull()?.price ?: "",
+                                            text = plat.name,
                                             color = colorResource(id = R.color.colorAba),
-                                            fontSize = 20.sp,
-                                            modifier = Modifier.offset(x = 12.dp),
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .offset(x = 8.dp),
+                                            style = TextStyle(
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = FontFamily.Serif
+                                            ),
                                         )
-                                        Text(
-                                            text = "€",
-                                            color = colorResource(id = R.color.colorAba),
-                                            fontSize = 20.sp,
-                                            modifier = Modifier.offset(x = 12.dp),
-                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = plat.prices.firstOrNull()?.price ?: "",
+                                                color = colorResource(id = R.color.colorAba),
+                                                fontSize = 20.sp,
+                                                modifier = Modifier.offset(x = 12.dp),
+                                            )
+                                            Text(
+                                                text = "€",
+                                                color = colorResource(id = R.color.colorAba),
+                                                fontSize = 20.sp,
+                                                modifier = Modifier.offset(x = 12.dp),
+                                            )
+                                        }
                                     }
-                                }
-                                val imageUrl = remember {
-                                    if (plat.images.isNotEmpty()) {
-                                        plat.images[0]
-                                    } else {
-                                        null
+                                    val imageUrl = remember {
+                                        if (plat.images.isNotEmpty()) {
+                                            plat.images[0]
+                                        } else {
+                                            null
+                                        }
                                     }
+                                    AsyncImage(
+                                        model = imageUrl ?: plat.images.getOrNull(1) ?: "",
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(150.dp)
+                                            .padding(8.dp)
+                                            .clip(RoundedCornerShape(10.dp)),
+                                        placeholder = painterResource(id = R.drawable.aba),
+                                        error = painterResource(id = R.drawable.aba),
+                                    )
                                 }
-                                AsyncImage(
-                                    model = imageUrl ?: plat.images.getOrNull(1) ?: "",
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(150.dp)
-                                        .padding(8.dp)
-                                        .clip(RoundedCornerShape(10.dp)),
-                                    placeholder = painterResource(id = R.drawable.aba),
-                                    error = painterResource(id = R.drawable.aba),
-                                )
                             }
                         }
-                    }
 
+                    }
                 }
             }
         }

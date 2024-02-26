@@ -17,6 +17,16 @@ class Basket {
         }
         save(context)
     }
+    fun addOne(item: BasketItem, context: Context) {
+        val existingItem = items.firstOrNull { it.plat == item.plat }
+        existingItem?.let {
+            it.count++
+        } ?: run {
+            items.add(BasketItem(1, item.plat))
+        }
+        save(context)
+    }
+
 
     fun delete(item: BasketItem, context: Context) {
         items.removeAll { item.plat.name == it.plat.name }
@@ -43,5 +53,16 @@ class Basket {
 
         val USER_PREFERENCES_NAME = "USER_PREFERENCES_NAME"
         val BASKET_PREFERENCES_KEY = "BASKET_PREFERENCES_KEY"
+    }
+
+    fun removeOne(item: BasketItem, context: Context) {
+        val index = items.indexOfFirst { it.plat == item.plat }
+        if (index != -1) {
+            items[index].count--
+            if (items[index].count == 0) {
+                items.removeAt(index)
+            }
+            save(context)
+        }
     }
 }
