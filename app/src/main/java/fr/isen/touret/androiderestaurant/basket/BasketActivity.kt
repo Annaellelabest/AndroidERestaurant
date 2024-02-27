@@ -3,6 +3,7 @@ package fr.isen.touret.androiderestaurant.basket
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,6 +57,7 @@ import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import java.math.BigDecimal
 
 
+
 class BasketActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,16 @@ class BasketActivity : ComponentActivity() {
                 BasketView()
             }
         }
+    }
+
+    override fun onDestroy() {
+        Log.d("on destroyed called", "life cycle Starter destroyed ")
+        super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("on resume called", "life cycle resumed ")
     }
 
 
@@ -84,6 +96,7 @@ fun calculateTotalPrice(basketItems: List<BasketItem>): BigDecimal {
 
 @Composable
 fun BasketView() {
+
     val context = LocalContext.current
     val basketItems = remember {
         mutableStateListOf<BasketItem>()
@@ -151,6 +164,7 @@ fun BasketView() {
 @Composable
 fun BasketItemView(item: BasketItem, basketItems: MutableList<BasketItem>) {
     val context = LocalContext.current
+
 
     Box(
         modifier = Modifier

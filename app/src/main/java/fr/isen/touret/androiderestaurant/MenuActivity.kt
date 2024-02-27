@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +57,7 @@ import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import org.json.JSONObject
 import com.android.volley.Request
 import com.google.gson.GsonBuilder
+import fr.isen.touret.androiderestaurant.basket.Basket
 import fr.isen.touret.androiderestaurant.basket.BasketActivity
 import fr.isen.touret.androiderestaurant.network.Category
 import fr.isen.touret.androiderestaurant.network.MenuResults
@@ -78,7 +82,7 @@ class MenuActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Greeting2(title ?: "")
-                    MenuView(type, title ?: "")
+                    MenuView(type, title ?: "", selectedItems)
                 }
             }
         }
@@ -116,7 +120,8 @@ fun GreetingPreview2() {
 }
 
 @Composable
-fun MenuView(type: DishType, title: String) {
+fun MenuView(type: DishType, title: String, basketItems: List<Plat>) {
+
     val category = remember {
         mutableStateOf<Category?>(null)
     }
@@ -140,26 +145,52 @@ fun MenuView(type: DishType, title: String) {
 
         Box(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .background(Color.Transparent)
+                .padding(end = 16.dp, top = 16.dp),
             contentAlignment = Alignment.TopEnd
-
         ) {
+            val basket = Basket.current(context)
+            val totalItemCount = basket.getTotalItemCount()
+            Log.d("2BasketItems", "2Total number of items in the basket: $totalItemCount")
+
+            if (totalItemCount > 0) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.Red, shape = CircleShape)
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .align(Alignment.TopEnd)
+
+                ) {
+                    Text(
+                        text = totalItemCount.toString(),
+                        color = Color.White,
+                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
             Button(
                 onClick = {
                     val intent = Intent(context, BasketActivity::class.java)
                     context.startActivity(intent)
                 },
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.transparent))
 
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.white))
             ) {
-                Image(
+                Box {
 
-                    painter = painterResource(id = R.drawable.iconba),
-                    contentDescription = "picture basket",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .size(40.dp),
-                )
+                    Image(
+                        painter = painterResource(id = R.drawable.iconba),
+                        contentDescription = "picture basket",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .size(40.dp),
+                    )
+
+                }
             }
         }
         Box(modifier = Modifier.padding(bottom = 15.dp)) {

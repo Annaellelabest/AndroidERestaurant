@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -25,15 +27,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.isen.touret.androiderestaurant.basket.Basket
 import fr.isen.touret.androiderestaurant.basket.BasketActivity
 import fr.isen.touret.androiderestaurant.ui.theme.AndroidERestaurantTheme
 
@@ -101,6 +108,12 @@ class MainActivity : ComponentActivity(), MenuInteface{
         super.onResume()
         Log.d("on resume called", "life cycle resumed ")
     }
+    override fun onDestroy() {
+        Log.d("on destroyed called", "life cycle Starter destroyed ")
+        super.onDestroy()
+    }
+
+
 
 
 }
@@ -112,26 +125,51 @@ val context= LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 10.dp, top = 10.dp),
+            .background(Color.Transparent)
+            .padding(end = 16.dp, top = 16.dp),
         contentAlignment = Alignment.TopEnd
-
     ) {
+        val basket = Basket.current(context)
+        val totalItemCount = basket.getTotalItemCount()
+        Log.d("2BasketItems", "2Total number of items in the basket: $totalItemCount")
+
+        if (totalItemCount > 0) {
+            Box(
+                modifier = Modifier
+                    .background(Color.Red, shape = CircleShape)
+                    .size(30.dp)
+                    .clip(CircleShape)
+                    .align(Alignment.TopEnd)
+
+            ) {
+                Text(
+                    text = totalItemCount.toString(),
+                    color = Color.White,
+                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
         Button(
             onClick = {
                 val intent = Intent(context, BasketActivity::class.java)
                 context.startActivity(intent)
             },
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.transparent))
 
-            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.white))
         ) {
-            Image(
+            Box {
 
-                painter = painterResource(id = R.drawable.iconba),
-                contentDescription = "picture basket",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .size(40.dp),
-            )
+                Image(
+                    painter = painterResource(id = R.drawable.iconba),
+                    contentDescription = "picture basket",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(40.dp),
+                )
+
+            }
         }
     }
     Column(

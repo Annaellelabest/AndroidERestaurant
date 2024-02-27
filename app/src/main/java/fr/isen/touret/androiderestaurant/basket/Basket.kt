@@ -27,6 +27,16 @@ class Basket {
         save(context)
     }
 
+    fun getTotalItemCount(): Int {
+        var totalCount = 0
+        for (item in items) {
+            totalCount += item.count
+        }
+        return totalCount
+    }
+
+
+
 
     fun delete(item: BasketItem, context: Context) {
         items.removeAll { item.plat.name == it.plat.name }
