@@ -13,6 +13,11 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="dessert_activity_title">Dessert</string>
     <string name="title_activity_basket">BasketActivity</string>
+    <string name="title_activity_less">-</string>
+    <string name="title_activity_add">+</string>
+    <string name="submit">Envoyer</string>
+    <string name="panier">Votre panier</string>
+    <string name="commander">Commander</string>
 
     <string-array name="listStarter" category="STARTER">
         <item>Salad</item>
